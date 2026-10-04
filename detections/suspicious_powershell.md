@@ -66,7 +66,7 @@ This detection helps:
 
 ## 🔗 Related Alerts
 
-- suspicious_powershell_alert.md
+- [Suspicous Powershell Activity](../alerts/sus_powershell_alert.md)
 
 ---
 

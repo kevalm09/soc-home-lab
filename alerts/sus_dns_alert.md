@@ -6,13 +6,13 @@
 
 This alert identifies suspicious DNS query behavior indicative of internal reconnaissance and host discovery.
 
-Attackers often use DNS to discover internal systems by querying known, guessed, or non-existent hostnames, resulting in a mix of successful and failed lookups.
+Attackers often use DNS to discover internal systems by querying legitimate, guessed, or non-existent hostnames, resulting in a mix of successful and failed lookups.
 
 ---
 
 ## 🔗 Based On Detection
 
-- dns_recon_detection.md
+- [dns_recon.md](../detections/dns_recon.md)
 
 ---
 

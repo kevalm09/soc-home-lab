@@ -68,7 +68,7 @@ Early detection can prevent attackers from successfully authenticating and movin
 
 ## 🔗 Related Alerts
 
-- brute_force_alert.md
+- [Brute Force Alert](../alerts/brute_force_alert.md)
 
 ---
 

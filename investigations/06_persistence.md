@@ -21,17 +21,17 @@ This behavior ensures continued access even if the original compromised credenti
 The attacker creates a new domain account to maintain access.
 
 ```powershell
-net user socadmin_clean Password123! /add /domain
+net user attacker1 Str0ngP@ssword123! /add /domain
 ```
 
-![Account Creation](../screenshots/persistence/account_creation.png)
+![Account Creation](../screenshots/persistence/create_user_command.png)
 
 **Description:**
 A new domain user account is created to establish persistent access within the environment.
 
 **Key Evidence:**
 
-- **New Account:** `socadmin_clean`
+- **New Account:** `attacker1`
 - **Scope:** Domain account
 - **Action:** Account creation using administrative privileges
 - **Purpose:** Establish alternate access path
@@ -43,17 +43,17 @@ A new domain user account is created to establish persistent access within the e
 The attacker elevates the newly created account to a privileged role.
 
 ```powershell
-net group "Domain Admins" socadmin_clean /add /domain
+net group "Domain Admins" attacker1 /add /domain
 ```
 
-![Privilege Escalation](../screenshots/persistence/privilege_escalation.png)
+![Privilege Escalation](../screenshots/persistence/privilege_escalation_command.png)
 
 **Description:**
 The attacker adds the newly created account to the Domain Admins group, granting full administrative privileges.
 
 **Key Evidence:**
 
-- **Account:** `socadmin_clean`
+- **Account:** `attacker1`
 - **Group:** Domain Admins
 - **Privilege Level:** Full administrative access
 - **Impact:** Persistent privileged access established
@@ -68,14 +68,14 @@ The attacker adds the newly created account to the Domain Admins group, granting
 
 This detection captures the creation of new user accounts within the domain.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/account_creation_detection.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/account_creation.md)
 
-![Account Creation Detection](../screenshots/persistence/account_creation_detection.png)
+![Account Creation Detection](../screenshots/persistence/user_account_created.png)
 
 **Key Evidence:**
 
 - **Event ID 4720:** User account created
-- **New Account:** `socadmin_clean`
+- **New Account:** `attacker1`
 - **Created By:** Privileged account
 - **Target System:** Domain controller
 
@@ -85,15 +85,15 @@ This detection captures the creation of new user accounts within the domain.
 
 This detection identifies changes to privileged groups within the domain.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/group_modification_detection.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/privilage_escalation.md)
 
-![Group Modification Detection](../screenshots/persistence/group_modification_detection.png)
+![Group Modification Detection](../screenshots/persistence/privileged_group_change.png)
 
 **Key Evidence:**
 
 - **Event ID 4728:** Member added to security-enabled global group
 - **Group:** Domain Admins
-- **Added Account:** `socadmin_clean`
+- **Added Account:** `attacker1`
 - **Privilege Escalation:** Confirmed
 
 ---
@@ -102,21 +102,39 @@ This detection identifies changes to privileged groups within the domain.
 
 ---
 
-### 📸 Privileged Account Creation Alert
+### 📸 New User Account Created Alert
 
-This alert was triggered based on the creation of a new domain account with elevated privileges.
+This alert was triggered after a new domain user account was created during the persistence phase of the attack.
 
-🔗 **Alert Logic:** [View Alert Configuration](../alerts/privileged_account_alert.md)
+🔗 **Alert Logic:** [View Alert Configuration](../alerts/account_created_alert.md)
 
-![Persistence Alert](../screenshots/persistence/persistence_alert.png)
+![New User Account Alert](../screenshots/persistence/account_created_alert.png)
+
+**Key Evidence:**
+
+- **Alert Severity:** Medium
+- **Event ID:** 4720
+- **New Account:** `attacker1`
+- **Created By:** `Administrator`
+- **Risk:** Potential persistence through unauthorized account creation
+
+---
+
+### 📸 Privileged Group Membership Modified Alert
+
+This alert was triggered after the newly created account was added to the **Domain Admins** group, granting it administrative privileges.
+
+🔗 **Alert Logic:** [View Alert Configuration](../alerts/privileged_group_alert.md)
+
+![Privileged Group Membership Alert](../screenshots/persistence/privileged_group_mod_alert.png)
 
 **Key Evidence:**
 
 - **Alert Severity:** High
-- **New Account:** `socadmin_clean`
-- **Privilege Level:** Domain Admin
-- **Behavior Pattern:** Account creation followed by privilege escalation
-- **Risk:** Long-term unauthorized access
+- **Event ID:** 4728
+- **Affected Account:** `attacker1`
+- **Modified Group:** `Domain Admins`
+- **Risk:** Privilege escalation resulting in persistent administrative access
 
 ---
 

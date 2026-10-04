@@ -66,7 +66,7 @@ This detection helps:
 
 ## 🔗 Related Alerts
 
-- dns_recon_alert.md
+- [Suspicious DNS Alert](../alerts/sus_dns_alert.md)
 
 ---
 

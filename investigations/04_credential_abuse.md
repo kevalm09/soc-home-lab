@@ -64,7 +64,7 @@ An attempt to access the administrative share on the domain controller failed du
 
 This panel identifies repeated failed authentication attempts associated with the earlier credential abuse activity.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/failed_logon_detection.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/failed_logons.md)
 
 ![Failed Logon Detection](../screenshots/credential_abuse/failed_logons_panel.png)
 
@@ -81,7 +81,7 @@ This panel identifies repeated failed authentication attempts associated with th
 
 This panel highlights abnormal authentication patterns associated with the earlier failed logon activity, indicating potential brute-force attempts.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/failed_logon_detection.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/brute_force.md)
 
 ![Brute Force Panel](../screenshots/credential_abuse/brute_force_panel.png)
 
@@ -97,7 +97,7 @@ This panel highlights abnormal authentication patterns associated with the earli
 
 This detection highlights repeated SMB connection attempts to the domain controller observed during credential abuse activity.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/smb_connection_detection.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/smb_connection.md)
 
 ![SMB connection attempts](../screenshots/credential_abuse/failed_smb.png)
 
@@ -114,7 +114,7 @@ This detection highlights repeated SMB connection attempts to the domain control
 
 This detection captures repeated internal connection attempts that were blocked or unauthorized, indicating failed lateral movement attempts.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/lateral_movement_blocked.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/internal_lateral_movement.md)
 
 ![Blocked Lateral Movement](../screenshots/credential_abuse/blocked_lateral.png)
 
@@ -135,7 +135,7 @@ This detection captures repeated internal connection attempts that were blocked 
 
 This alert was triggered based on repeated failed authentication attempts observed during the credential abuse phase.
 
-🔗 **Alert Logic:** [View Alert Configuration](../alerts/bruteforce_alert.md)
+🔗 **Alert Logic:** [View Alert Configuration](../alerts/brute_force_alert.md)
 
 ![Brute Force Alert](../screenshots/credential_abuse/brute_force_alert.png)
 

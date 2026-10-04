@@ -68,7 +68,7 @@ This detection helps:
 
 ## 🔗 Related Alerts
 
-- privileged_group_alert.md
+- [Privilege escalation alert](../alerts/privileged_group_alert.md)
 
 ---
 

@@ -12,13 +12,13 @@ Such behavior is commonly associated with reconnaissance and enumeration techniq
 
 ## 🔗 Based On Detection
 
-- service_discovery_detection.md
+- [Internal Service Discovery](../detections/internal_service_discovery.md)
 
 ---
 
 ## ⚙️ Trigger Logic
 
-This alert is triggered when an internal host connects to multiple unique ports on another internal system, indicating potential service enumeration.
+This alert is triggered when an internal host connects to multiple unique ports on an internal host, indicating potential service enumeration.
 
 ---
 

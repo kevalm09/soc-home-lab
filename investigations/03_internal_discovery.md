@@ -73,7 +73,7 @@ This detection identifies internal port scanning activity originating from the c
 
 This detection highlights high-volume connection attempts to multiple services, indicating systematic service enumeration.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/service_discovery.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/internal_service_discovery.md)
 
 ![Service Discovery](../screenshots/internal_discovery/service_discovery_panel.png)
 
@@ -102,7 +102,7 @@ This detection highlights high-volume connection attempts to multiple services, 
 
 This alert was triggered based on multi-port connection attempts originating from a single internal host, indicating potential port scanning activity.
 
-🔗 **Alert Logic:** [View Alert Configuration](../alerts/internal_port_scan_alert.md)
+🔗 **Alert Logic:** [View Alert Configuration](../alerts/port_scan_alert.md)
 
 ![Port Scan Alert](../screenshots/internal_discovery/port_scan_alert.png)
 

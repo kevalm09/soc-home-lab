@@ -77,7 +77,7 @@ This pattern is consistent with internal network mapping and host discovery.
 
 This panel identifies suspicious enumeration activity using Windows Event ID **4688** (process creation), capturing commands executed on the compromised host during the earlier command-based reconnaissance phase.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/recon_command_execution.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/recon_command.md)
 
 ![Recon Detection](../screenshots/reconnaissance/recon_panel.png)
 
@@ -93,7 +93,7 @@ This panel identifies suspicious enumeration activity using Windows Event ID **4
 
 This panel highlights abnormal DNS behavior indicative of reconnaissance, including high query volume and failed lookups.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/dns_recon_activity.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/dns_recon.md)
 
 ![DNS Detection](../screenshots/reconnaissance/dns_panel.png)
 
@@ -111,7 +111,7 @@ This panel highlights abnormal DNS behavior indicative of reconnaissance, includ
 
 This alert was triggered as a direct result of the DNS-based reconnaissance activity observed earlier, where repeated hostname queries and NXDOMAIN responses indicated internal enumeration behavior.
 
-🔗 **Alert Logic:** [View Alert Configuration](../alerts/dns_recon_alert.md)
+🔗 **Alert Logic:** [View Alert Configuration](../alerts/sus_dns_alert.md)
 
 ![DNS Alert](../screenshots/reconnaissance/dns_alert.png)
 

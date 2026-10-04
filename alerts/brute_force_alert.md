@@ -12,7 +12,7 @@ Attackers commonly attempt multiple logins against user accounts to gain access 
 
 ## 🔗 Based On Detection
 
-- brute_force_detection.md
+- [Brute Force Detection](../detections/brute_force.md)
 
 ---
 

@@ -66,7 +66,7 @@ This detection helps:
 
 ## 🔗 Related Alerts
 
-- internal_port_scan_alert.md
+- [Port Scan Alert](../alerts/port_scan_alert.md)
 
 ---
 

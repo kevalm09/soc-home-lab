@@ -80,7 +80,7 @@ This panel detects abnormal PowerShell execution associated with the earlier com
 
 This panel identifies the use of legitimate system binaries for suspicious purposes, such as downloading external payloads.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/lolbin_execution.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/lolbin.md)
 
 ![LOLBin Detection](../screenshots/suspicious_execution/lolbin_panel.png)
 
@@ -100,7 +100,7 @@ This panel identifies the use of legitimate system binaries for suspicious purpo
 
 This alert was triggered based on the use of PowerShell with execution policy bypass and related suspicious flags observed during the execution phase.
 
-🔗 **Alert Logic:** [View Alert Configuration](../alerts/suspicious_powershell_alert.md)
+🔗 **Alert Logic:** [View Alert Configuration](../alerts/sus_powershell_alert.md)
 
 ![PowerShell Alert](../screenshots/suspicious_execution/sus_powershell_alert.png)
 

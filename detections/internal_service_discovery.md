@@ -67,7 +67,7 @@ This detection helps:
 
 ## 🔗 Related Alerts
 
-- service_discovery_alert.md
+- [Service Discovery Alert](../alerts/service_discovery_alert.md)
 
 ---
 

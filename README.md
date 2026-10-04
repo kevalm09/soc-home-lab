@@ -1,257 +1,472 @@
-# 🛡️ SOC Analyst Home Lab: Detection, Investigation & Response Project
+# 🛡️ Azure SOC Home Lab
 
 ## 📌 Overview
 
-This project documents the design and implementation of a SOC analyst home lab hosted in a **Microsoft Azure environment**, built to simulate a realistic multi-stage cyber attack in a Windows Active Directory environment.
+This project is a hands-on Security Operations Center (SOC) lab built in **Microsoft Azure** to simulate a multi-stage attack against a Windows Active Directory environment.
 
-The lab integrates multiple telemetry sources into **Splunk SIEM**, enabling detection, investigation, and response across:
+The lab combines **endpoint telemetry, authentication events, firewall logs, and network monitoring** into **Splunk Enterprise**, allowing attacker activity to be detected, investigated, and correlated across multiple stages of an attack.
 
-- Endpoint activity (Windows logs)
-- Authentication events (Active Directory)
-- Firewall telemetry (pfSense)
-- Network visibility (Zeek)
+The project focuses on the practical SOC workflow:
 
-The objective is to demonstrate **end-to-end SOC capabilities**, including detection engineering, log correlation, incident investigation, and response.
-
----
+**Detection → Investigation → Analysis → Response**
 
 ## 📑 Table of Contents
 
-- [Overview](#-overview)
-- [Objectives](#-objectives)
-- [Lab Environment](#-lab-environment)
-- [Lab Architecture](#-lab-architecture)
-- [Investigation Scenario](#️-investigation-scenario-attack-simulation)
-- [MITRE ATT&CK Mapping](#-mitre-attck-mapping)
-- [Detections Implemented](#-detections-implemented)
-- [Alerts Created](#-alerts-created)
-- [Incident Response & Remediation](#️-incident-response--remediation)
-- [Key Outcomes](#-key-outcomes)
-- [Skills Demonstrated](#-skills-demonstrated)
-- [Project Structure](#-project-structure)
-- [Future Improvements](#-future-improvements)
-- [Disclaimer](#️-disclaimer)
-- [Summary](#-summary)
+- [🎯 Project Objectives](#-project-objectives)
+- [☁️ Lab Environment](#️-lab-environment)
+- [🗺️ Architecture](#️-architecture)
+- [📥 Telemetry & Log Sources](#-telemetry--log-sources)
+- [⚔️ Attack Simulation & Investigations](#️-attack-simulation--investigations)
+- [🔎 Detection Engineering](#-detection-engineering)
+- [🚨 Alerting](#-alerting)
+- [🧭 MITRE ATT&CK](#-mitre-attck)
+- [📊 Investigation & Analysis](#-investigation--analysis)
+- [🛡️ Incident Response](#️-incident-response)
+- [🧠 Skills Demonstrated](#-skills-demonstrated)
+- [🗂️ Repository Structure](#️-repository-structure)
+- [🚀 Future Improvements](#-future-improvements)
+- [⚠️ Disclaimer](#️-disclaimer)
+- [🏁 Summary](#-summary)
 
 ---
 
-## 🎯 Objectives
+## 🎯 Project Objectives
 
-- Build a functional SOC lab in Azure
-- Centralize multi-source telemetry into Splunk
-- Simulate realistic attacker behavior
-- Develop and validate detections
-- Investigate attacker activity step-by-step
-- Perform containment and remediation actions
+- Build a segmented enterprise-style environment in Microsoft Azure
+- Deploy and configure a Windows Active Directory environment
+- Centralize security telemetry in Splunk
+- Implement detection logic using Splunk SPL
+- Generate and investigate realistic attacker activity
+- Correlate endpoint and network telemetry
+- Map observed activity to MITRE ATT&CK techniques
+- Configure automated alerts for selected detections
+- Document investigation and incident response workflows
 
 ---
 
 ## ☁️ Lab Environment
 
-### Infrastructure
+The lab is hosted in **Microsoft Azure** using a segmented virtual network consisting of three subnets.
 
-- **Microsoft Azure** – Hosted lab environment with segmented virtual networking
-- **Azure Virtual Network (VNet)** – Simulated internal enterprise network
-- **Azure Virtual Machines** – Hosting workstation, domain controller, and monitoring systems
+### Network Segmentation
 
-### Core Components
+| Subnet      | Address Space | Primary Components               |
+| ----------- | ------------- | -------------------------------- |
+| Workstation | `10.0.2.0/24` | Windows Workstation, pfSense LAN |
+| Server      | `10.0.1.0/24` | Domain Controller                |
+| Security    | `10.0.3.0/24` | Splunk, Zeek, pfSense WAN        |
 
-- **Splunk Enterprise** – SIEM, dashboards, detections, alerting
-- **Windows 11 Workstation** – Compromised endpoint / attacker foothold
-- **Windows Server Domain Controller (DC01)** – Active Directory services
-- **pfSense Firewall** – Network segmentation and logging
-- **Zeek Network Security Monitor** – DNS and connection telemetry
-- **Windows Security Logs** – Endpoint and authentication visibility
+### Core Technologies
 
----
-
-## 🗺️ Lab Architecture
-
-> Add your network diagram below
-
-![Network Diagram](architecture/network-diagram.png)
-
-This environment simulates internal enterprise communication, authentication flows, and segmented network traffic while providing centralized visibility across multiple telemetry layers.
+- **Microsoft Azure** – Cloud infrastructure and virtual networking
+- **Windows 11** – Workstation / attacker foothold
+- **Windows Server / Active Directory** – Domain services and authentication
+- **pfSense** – Firewall, routing, and network logging
+- **Zeek** – Network security monitoring
+- **Splunk Enterprise** – SIEM, detection, alerting, and visualization
+- **Windows Security Logs** – Endpoint and authentication telemetry
 
 ---
 
-# ⚔️ Investigation Scenario (Attack Simulation)
+## 🗺️ Architecture
 
-A multi-stage attack was simulated to validate detection coverage and SOC investigation workflows.
+The environment uses Azure routing and monitoring controls to provide visibility into activity between the workstation, domain controller, and security infrastructure.
 
----
+Traffic from the workstation subnet is routed through **pfSense**, allowing selected network flows to be inspected and logged.
 
-## 1. Reconnaissance
+Azure **vTAP** mirrors traffic from the workstation and domain controller to the Zeek sensor for network analysis.
 
-- System and domain enumeration (`whoami`, `nltest`, `net user`, `net group`)
-- Identification of privileged accounts (Domain Admins)
-- Suspicious DNS queries and failed lookups (Zeek)
+Security telemetry is then centralized in Splunk.
 
----
+![SOC Lab Architecture](screenshots/architecture/network_diagram.png)
 
-## 2. Suspicious Execution
+For a detailed explanation of the network design, routing, traffic monitoring, and log ingestion architecture:
 
-- PowerShell execution with suspicious flags (`-nop`, `-executionpolicy bypass`)
-- Living-off-the-land binary abuse (`certutil.exe`)
+➡️ [View Architecture Documentation](architecture/architecture_overview.md)
 
 ---
 
-## 3. Credential Abuse
+## 📥 Telemetry & Log Sources
 
-- Repeated failed logon attempts targeting a privileged account (`socadmin`)
-- Brute-force detection via Event ID 4625
+The lab collects telemetry from multiple layers of the environment.
 
----
+### Windows
 
-## 4. Internal Discovery
+Windows Security Event Logs provide visibility into:
 
-- Multi-port service discovery against the Domain Controller
-- Correlated detection across pfSense and Zeek telemetry
+- Process creation
+- Failed authentication attempts
+- User account creation
+- Privileged group modifications
 
----
+Key events include:
 
-## 5. Lateral Movement
+- Event ID `4688` – Process Creation
+- Event ID `4625` – Failed Logon
+- Event ID `4720` – User Account Created
+- Event ID `4728` – Member Added to Security-Enabled Global Group
 
-- Failed SMB authentication attempts
-- Successful SMB access using valid credentials
+### Zeek
 
----
+Zeek provides network-level visibility through:
 
-## 6. Access Pivot
+- DNS activity
+- Connection metadata
+- Source and destination IP addresses
+- Destination ports
+- Connection states
+- Internal service discovery activity
 
-- Confirmed access to the Domain Controller via administrative SMB share (`C$`)
-- Demonstrates successful use of compromised credentials
+### pfSense
 
----
+pfSense provides:
 
-## 7. Persistence
+- Firewall allow/deny events
+- Internal traffic visibility
+- Network connection attempts
+- Port scanning telemetry
 
-- Creation of a new domain account (`attacker1`)
-- Account added to **Domain Admins**
-- Establishes long-term privileged access
+### Splunk
 
----
+Telemetry is centralized into dedicated indexes:
 
-# 🧭 MITRE ATT&CK Mapping
-
-This mapping demonstrates how observed activity aligns with known adversary techniques, enabling structured detection and response.
-
-| Phase                | Technique ID | Technique Name                | Description                             |
-| -------------------- | ------------ | ----------------------------- | --------------------------------------- |
-| Reconnaissance       | T1087        | Account Discovery             | Enumerating users and groups            |
-| Reconnaissance       | T1018        | Remote System Discovery       | Identifying domain controller           |
-| Reconnaissance       | T1046        | Network Service Discovery     | DNS queries and service probing         |
-| Execution            | T1059.001    | PowerShell                    | Suspicious PowerShell execution         |
-| Execution            | T1218        | Signed Binary Proxy Execution | LOLBin abuse using certutil             |
-| Credential Access    | T1110        | Brute Force                   | Repeated failed authentication attempts |
-| Discovery            | T1046        | Network Service Discovery     | Port scanning and enumeration           |
-| Lateral Movement     | T1021.002    | SMB/Windows Admin Shares      | SMB access attempts                     |
-| Lateral Movement     | T1078        | Valid Accounts                | Successful authentication               |
-| Persistence          | T1136        | Create Account                | Creation of new domain user             |
-| Privilege Escalation | T1098        | Account Manipulation          | Adding user to Domain Admins            |
+- `windows`
+- `zeek`
+- `firewall`
 
 ---
 
-# 🔎 Detections Implemented
+# ⚔️ Attack Simulation & Investigations
 
-| Detection                                     | Data Source  | Description                                |
-| --------------------------------------------- | ------------ | ------------------------------------------ |
-| Suspicious PowerShell Activity                | Windows Logs | Detect encoded/hidden PowerShell execution |
-| Reconnaissance Command Execution              | Windows Logs | Detect enumeration commands                |
-| LOLBin Execution                              | Windows Logs | Detect certutil abuse                      |
-| Potential Brute Force Activity                | Windows Logs | Detect repeated failed logons              |
-| RDP Logons                                    | Windows Logs | Detect remote interactive logons           |
-| New User Account Creation                     | Windows Logs | Detect domain account creation             |
-| Privileged Group Membership Changes           | Windows Logs | Detect admin group modifications           |
-| Internal Port Scan Activity                   | pfSense      | Detect internal service discovery          |
-| Internal Lateral Movement Attempts            | pfSense      | Detect SMB-based movement                  |
-| Suspicious DNS Recon Activity                 | Zeek         | Detect NXDOMAIN and suspicious queries     |
-| Internal Service Discovery / Connection Burst | Zeek         | Detect connection bursts                   |
-| Internal SMB Connection Visibility            | Zeek         | Validate SMB lateral movement              |
+The lab simulates a multi-stage attack progressing from reconnaissance through persistence.
+
+Each stage is documented as a separate investigation containing attacker activity, evidence, detections, alerts, analysis, and MITRE ATT&CK mapping where applicable.
 
 ---
 
-# 🚨 Alerts Created
+## 1. 🔍 Reconnaissance
 
-- Suspicious PowerShell Activity Detected
-- Potential Brute Force Activity
-- Internal Port Scan Activity Detected
-- Suspicious DNS Recon Activity
-- Internal Service Discovery / Connection Burst
-- New User Account Creation
-- Privileged Group Membership Change
+The attacker begins by gathering information about the Windows environment and Active Directory domain.
 
----
+Activities include:
 
-# 🛡️ Incident Response & Remediation
+- Identifying the domain
+- Discovering the domain controller
+- Enumerating users and groups
+- Identifying privileged accounts
+- Performing DNS-based reconnaissance
+- Generating suspicious DNS queries and NXDOMAIN responses
 
-Following detection of malicious activity, structured response actions were performed.
+**Key telemetry:**
 
----
+- Windows Event ID `4688`
+- Zeek DNS logs
 
-## Containment
-
-- Created a trusted administrative account (`socadmin_clean`)
-- Disabled compromised account (`socadmin`)
+➡️ [View Reconnaissance Investigation](investigations/01_reconnaissance.md)
 
 ---
 
-## Eradication
+## 2. ⚠️ Suspicious Execution
 
-- Removed attacker-created account (`attacker1`)
-- Removed privileged group membership
+The attacker executes commands using PowerShell and legitimate Windows utilities.
+
+Activities include:
+
+- PowerShell execution with suspicious flags
+- Execution policy bypass
+- Non-profile PowerShell execution
+- `certutil.exe` abuse for file transfer
+
+**Key telemetry:**
+
+- Windows Event ID `4688`
+- Process command-line data
+
+➡️ [View Suspicious Execution Investigation](investigations/02_suspicious_execution.md)
 
 ---
 
-## Recovery
+## 3. 🔐 Credential Abuse
 
-- Restored secure administrative access
-- Recommended credential resets and audit of privileged accounts
+The attacker attempts to compromise a privileged domain account identified during reconnaissance.
+
+Activities include:
+
+- Repeated failed authentication attempts
+- Targeting the `socadmin` account
+- SMB authentication attempts against the domain controller
+- Unauthorized internal access attempts blocked by the firewall
+
+**Key telemetry:**
+
+- Windows Event ID `4625`
+- Zeek connection logs
+- pfSense firewall logs
+
+➡️ [View Credential Abuse Investigation](investigations/04_credential_abuse.md)
 
 ---
 
-# 📈 Key Outcomes
+## 4. 🔎 Internal Discovery
 
-This project demonstrates detection and investigation of:
+After gaining access to the environment, the attacker performs internal service enumeration against the domain controller.
 
-- Endpoint execution abuse
-- Credential-based attacks
-- Internal reconnaissance
-- Lateral movement behavior
-- Privileged account abuse
-- Persistence mechanisms
+Activities include probing services such as:
+
+- DNS
+- Kerberos
+- RPC
+- LDAP
+- SMB
+- RDP
+- High-numbered ephemeral ports
+
+The activity generates high-volume, multi-port connection patterns that can be identified through network telemetry.
+
+**Key telemetry:**
+
+- Zeek connection logs
+- pfSense firewall logs
+
+➡️ [View Internal Discovery Investigation](investigations/03_internal_discovery.md)
+
+---
+
+## 5. 🚀 Lateral Movement
+
+The attacker uses compromised domain administrator credentials to transition from the compromised workstation user context into the `socadmin` security context.
+
+The attacker uses Windows **Run as different user** to launch Command Prompt with the compromised domain administrator credentials.
+
+The `whoami` command is then used to verify the resulting security context.
+
+**Key evidence:**
+
+- `SOCLAB\socadmin`
+- Administrative Command Prompt
+- Compromised workstation `10.0.2.4`
+
+This phase demonstrates the use of compromised valid credentials to obtain privileged access.
+
+➡️ [View Lateral Movement Investigation](investigations/05_lateral_movement.md)
+
+---
+
+## 6. 🔒 Persistence
+
+After obtaining administrative access, the attacker establishes persistence by creating a new domain account and adding it to the **Domain Admins** group.
+
+Activities include:
+
+- Creating the `attacker1` domain account
+- Adding `attacker1` to Domain Admins
+- Establishing an alternate privileged access path
+
+**Key telemetry:**
+
+- Event ID `4720` – Account Creation
+- Event ID `4728` – Privileged Group Modification
+
+Separate detections and alerts are used to identify the account creation and subsequent privileged group modification.
+
+➡️ [View Persistence Investigation](investigations/06_persistence.md)
+
+---
+
+# 🔎 Detection Engineering
+
+Detection logic was developed in **Splunk SPL** using telemetry from Windows, Zeek, and pfSense.
+
+Documented detection logic includes:
+
+| Detection                        | Primary Source | Purpose                                             |
+| -------------------------------- | -------------- | --------------------------------------------------- |
+| Reconnaissance Command Execution | Windows        | Identify enumeration commands                       |
+| Suspicious PowerShell Execution  | Windows        | Detect suspicious PowerShell flags                  |
+| LOLBin Execution                 | Windows        | Identify abuse of trusted Windows utilities         |
+| Failed Logons                    | Windows        | Identify authentication failures                    |
+| Brute Force                      | Windows        | Identify repeated failed authentication             |
+| Account Creation                 | Windows        | Detect new domain accounts                          |
+| Privileged Group Modification    | Windows        | Detect privileged group changes                     |
+| Internal Port Scan               | pfSense        | Identify multi-port scanning                        |
+| Internal Lateral Movement        | pfSense        | Identify unauthorized internal access attempts      |
+| DNS Reconnaissance               | Zeek           | Identify suspicious DNS activity                    |
+| Internal Service Discovery       | Zeek           | Identify connection bursts across multiple services |
+| SMB Connection Activity          | Zeek           | Provide visibility into internal SMB connections    |
+
+➡️ [View Detection Engineering Documentation](detections/)
+
+---
+
+# 🚨 Alerting
+
+Selected detections were configured as scheduled Splunk alerts. Each alert is documented separately, including its detection logic, trigger conditions, schedule, severity, and MITRE ATT&CK mapping.
+
+### Configured Alerts
+
+| Alert                                                                                 | Description                                         |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| [🚨 Suspicious PowerShell Execution](alerts/sus_powershell_alert.md)                  | Detects suspicious PowerShell execution patterns    |
+| [🚨 Potential Brute Force Activity](alerts/brute_force_alert.md)                      | Detects repeated failed authentication attempts     |
+| [🚨 Potential Internal Port Scan](alerts/port_scan_alert.md)                          | Detects multi-port internal scanning activity       |
+| [🚨 Suspicious DNS Recon Activity](alerts/sus_dns_alert.md)                           | Detects suspicious DNS reconnaissance patterns      |
+| [🚨 Internal Service Discovery / Connection Burst](alerts/service_discovery_alert.md) | Detects connection bursts across multiple services  |
+| [🚨 New User Account Created](alerts/account_created_alert.md)                        | Detects creation of new domain user accounts        |
+| [🚨 Privileged Group Membership Modified](alerts/privileged_group_alert.md)           | Detects modifications to privileged security groups |
+
+---
+
+# 🧭 MITRE ATT&CK
+
+Observed activity is mapped to relevant MITRE ATT&CK techniques throughout the investigation and detection documentation.
+
+Examples include:
+
+| Technique | Technique Name                |
+| --------- | ----------------------------- |
+| T1087     | Account Discovery             |
+| T1018     | Remote System Discovery       |
+| T1046     | Network Service Discovery     |
+| T1059.001 | PowerShell                    |
+| T1218     | Signed Binary Proxy Execution |
+| T1110     | Brute Force                   |
+| T1078     | Valid Accounts                |
+| T1136     | Create Account                |
+| T1098     | Account Manipulation          |
+
+The mappings are used to provide context for attacker behavior and connect individual detections to broader adversary techniques.
+
+---
+
+# 📊 Investigation & Analysis
+
+Each investigation follows a consistent SOC analysis workflow:
+
+1. **Attacker Activity**
+   - Document the simulated attacker actions
+
+2. **Detection**
+   - Identify the telemetry and detection logic that surfaced the activity
+
+3. **Alert**
+   - Review the corresponding Splunk alert where applicable
+
+4. **Analysis**
+   - Interpret the activity and determine its security significance
+
+5. **MITRE ATT&CK Mapping**
+   - Map the observed behavior to relevant techniques
+
+6. **Conclusion**
+   - Document the findings and progression of the attack
+
+This structure demonstrates the transition from raw security telemetry to an actionable investigation.
+
+---
+
+# 🛡️ Incident Response
+
+The project also documents incident response and remediation activities covering:
+
+### Containment
+
+- Restricting compromised access
+- Terminating active sessions
+- Isolating affected systems
+
+### Eradication
+
+- Removing unauthorized accounts
+- Reverting privileged group changes
+- Clearing active sessions and credentials
+
+### Recovery
+
+- Restoring legitimate administrative access
+- Resetting privileged credentials
+- Returning systems to a known-good state
+- Monitoring for signs of re-compromise
+
+➡️ [View Incident Response Documentation](response/incident_response.md)
 
 ---
 
 # 🧠 Skills Demonstrated
 
-- Splunk SIEM & SPL query development
+This project demonstrates hands-on experience with:
+
+- Splunk Enterprise
+- Splunk SPL
 - Detection Engineering
+- SIEM Alerting
 - Windows Security Event Analysis
-- Active Directory Monitoring
-- Network Security Monitoring (Zeek)
-- Firewall Log Analysis (pfSense)
-- Incident Investigation & Response
-- Multi-source log correlation
-- Cloud fundamentals (Azure environment)
+- Active Directory
+- Windows Endpoint Monitoring
+- Zeek Network Security Monitoring
+- pfSense Firewall Monitoring
+- Network Traffic Analysis
+- Authentication Analysis
+- Incident Investigation
+- Incident Response
+- MITRE ATT&CK
+- Azure Networking
+- Cloud-Based Lab Infrastructure
+- Multi-source Log Correlation
 
 ---
 
-# 🗂️ Project Structure
+# 🗂️ Repository Structure
 
-```
-SOC-Homelab-Detection-Project/
+```text
+soc-home-lab/
 │
 ├── README.md
-├── dashboards/
+│
+├── architecture/
+│   └── architecture_overview.md
+│
 ├── detections/
+│   ├── account_creation.md
+│   ├── brute_force.md
+│   ├── dns_recon.md
+│   ├── failed_logons.md
+│   ├── internal_lateral_movement.md
+│   ├── internal_port_scan.md
+│   ├── internal_service_discovery.md
+│   ├── lolbin.md
+│   ├── privilege_escalation.md
+│   ├── recon_command.md
+│   ├── smb_connection.md
+│   └── suspicious_powershell.md
+│
 ├── alerts/
+│   ├── account_created_alert.md
+│   ├── brute_force_alert.md
+│   ├── port_scan_alert.md
+│   ├── privileged_group_alert.md
+│   ├── service_discovery_alert.md
+│   ├── sus_dns_alert.md
+│   └── sus_powershell_alert.md
+│
 ├── investigations/
-├── screenshots/
-└── architecture/
-```
-
----
+│   ├── 01_reconnaissance.md
+│   ├── 02_suspicious_execution.md
+│   ├── 03_internal_discovery.md
+│   ├── 04_credential_abuse.md
+│   ├── 05_lateral_movement.md
+│   └── 06_persistence.md
+│
+├── response/
+│   └── incident_response.md
+│
+└── screenshots/
+    ├── architecture/
+    ├── reconnaissance/
+    ├── suspicious_execution/
+    ├── credential_abuse/
+    ├── internal_discovery/
+    ├── lateral_movement/
+    └── persistence/
 
 # 🚀 Future Improvements
 
@@ -276,3 +491,4 @@ This project reflects the full lifecycle of a SOC investigation:
 # 👉 Detection → Investigation → Response
 
 It demonstrates the ability to identify malicious activity, analyze attacker behavior, and execute appropriate remediation actions in a simulated enterprise environment.
+```

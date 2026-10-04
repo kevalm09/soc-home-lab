@@ -4,7 +4,7 @@
 
 ## 📌 Overview
 
-This alert identifies internal port scanning activity where a single source attempts connections to multiple destination ports on a target system.
+This alert identifies internal port scanning activity where a single source attempts connections tomultiple unique destination ports on the same target host
 
 Such behavior is commonly associated with reconnaissance, where attackers probe for open services to identify potential entry points.
 
@@ -12,7 +12,7 @@ Such behavior is commonly associated with reconnaissance, where attackers probe 
 
 ## 🔗 Based On Detection
 
-- internal_port_scan_detection.md
+- [Internal Port Scan Detection](../detections/internal_port_scan.md)
 
 ---
 
@@ -29,7 +29,7 @@ index=firewall process=filterlog
 | rex field=_raw ",(?<src_ip>\d+\.\d+\.\d+\.\d+),(?<dest_ip>\d+\.\d+\.\d+\.\d+),(?<src_port>\d+),(?<dest_port>\d+)"
 | stats dc(dest_port) as unique_ports values(dest_port) as ports by src_ip, dest_ip
 | where unique_ports >= 4
-| sort - unique_ports
+| sort -unique_ports
 ```
 
 ---

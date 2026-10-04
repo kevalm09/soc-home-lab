@@ -12,7 +12,7 @@ Attackers frequently use PowerShell with obfuscation and execution bypass techni
 
 ## 🔗 Based On Detection
 
-- suspicious_powershell_detection.md
+- [suspicous powershell](../detections/suspicious_powershell.md)
 
 ---
 

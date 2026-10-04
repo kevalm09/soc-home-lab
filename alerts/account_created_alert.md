@@ -12,7 +12,7 @@ Attackers often create new accounts to maintain access after gaining elevated pr
 
 ## 🔗 Based On Detection
 
-- account_creation_detection.md
+- [Account Creation Detection](../detections/account_creation.md)
 
 ---
 

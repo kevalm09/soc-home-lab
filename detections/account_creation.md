@@ -65,7 +65,7 @@ This detection helps:
 
 ## 🔗 Related Alerts
 
-- account_creation_alert.md
+- [Account Created Alert](../alerts/account_created_alert.md)
 
 ---
 

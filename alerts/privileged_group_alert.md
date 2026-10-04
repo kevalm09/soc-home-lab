@@ -12,7 +12,7 @@ Such activity is a strong indicator of privilege escalation and potential attack
 
 ## 🔗 Based On Detection
 
-- privileged_group_modification_detection.md
+- [privilege escalation](../detections/privilege_escalation.md)
 
 ---
 
