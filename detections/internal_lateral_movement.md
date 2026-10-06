@@ -65,12 +65,6 @@ This detection helps:
 
 ---
 
-## 🔗 Related Alerts
-
-- lateral_movement_alert.md
-
----
-
 ## 🧭 MITRE ATT&CK Mapping
 
 | Technique ID | Technique Name  | Description                     |

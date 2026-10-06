@@ -76,12 +76,6 @@ Detecting this behavior helps:
 
 ---
 
-## 🔗 Related Alerts
-
-- recon_activity_alert.md
-
----
-
 ## 🧭 MITRE ATT&CK Mapping
 
 | Technique ID | Technique Name               | Description                   |

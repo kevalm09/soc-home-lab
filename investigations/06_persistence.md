@@ -85,7 +85,7 @@ This detection captures the creation of new user accounts within the domain.
 
 This detection identifies changes to privileged groups within the domain.
 
-🔗 **Detection Details:** [View Detection Logic](../detections/privilage_escalation.md)
+🔗 **Detection Details:** [View Detection Logic](../detections/privilege_escalation.md)
 
 ![Group Modification Detection](../screenshots/persistence/privileged_group_change.png)
 

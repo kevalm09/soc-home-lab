@@ -65,12 +65,6 @@ This detection helps:
 
 ---
 
-## 🔗 Related Alerts
-
-- smb_activity_alert.md
-
----
-
 ## 🧭 MITRE ATT&CK Mapping
 
 | Technique ID | Technique Name           | Description              |

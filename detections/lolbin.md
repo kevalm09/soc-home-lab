@@ -69,12 +69,6 @@ This detection helps:
 
 ---
 
-## 🔗 Related Alerts
-
-- lolbin_execution_alert.md
-
----
-
 ## 🧭 MITRE ATT&CK Mapping
 
 | Technique ID | Technique Name                | Description                    |

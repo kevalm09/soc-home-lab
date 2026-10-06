@@ -64,7 +64,7 @@ This detection helps analysts quickly identify abnormal authentication patterns.
 
 ## 🔗 Related Alerts
 
-- brute_force_alert.md
+- [Brute Force Alert](../alerts/brute_force_alert.md)
 
 ---
 

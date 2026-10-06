@@ -26,7 +26,6 @@ The project focuses on the practical SOC workflow:
 - [🗂️ Repository Structure](#️-repository-structure)
 - [🚀 Future Improvements](#-future-improvements)
 - [⚠️ Disclaimer](#️-disclaimer)
-- [🏁 Summary](#-summary)
 
 ---
 
@@ -366,26 +365,34 @@ This structure demonstrates the transition from raw security telemetry to an act
 
 # 🛡️ Incident Response
 
-The project also documents incident response and remediation activities covering:
+The project documents the response actions performed after detecting and investigating malicious activity within the Azure Active Directory lab environment.
+
+The response focused on **containment, eradication, and recovery**, with the objective of removing unauthorized access, eliminating persistence mechanisms, and restoring secure administrative access.
 
 ### Containment
 
-- Restricting compromised access
-- Terminating active sessions
-- Isolating affected systems
+- Created a trusted administrative account (`socadmin_clean`)
+- Disabled the compromised `socadmin` account
+- Restricted the attacker's ability to continue using the compromised administrative account
 
 ### Eradication
 
-- Removing unauthorized accounts
-- Reverting privileged group changes
-- Clearing active sessions and credentials
+- Removed the attacker-created account (`attacker1`)
+- Removed the unauthorized privileged group membership
+- Reviewed the **Domain Admins** group for unauthorized changes
+- Removed the persistence mechanism created during the attack
 
 ### Recovery
 
-- Restoring legitimate administrative access
-- Resetting privileged credentials
-- Returning systems to a known-good state
-- Monitoring for signs of re-compromise
+- Restored secure administrative access using the trusted administrative account
+- Re-enabled legitimate administrative access after verification
+- Reset credentials for affected privileged accounts
+- Reviewed privileged account access
+- Returned the environment to a known-good administrative state
+
+The response process followed:
+
+**Detection → Investigation → Containment → Eradication → Recovery**
 
 ➡️ [View Incident Response Documentation](response/incident_response.md)
 
@@ -467,6 +474,7 @@ soc-home-lab/
     ├── internal_discovery/
     ├── lateral_movement/
     └── persistence/
+```
 
 # 🚀 Future Improvements
 
@@ -483,12 +491,3 @@ soc-home-lab/
 This project was conducted in a controlled lab environment for educational and defensive security purposes only.
 
 ---
-
-# 🏁 Summary
-
-This project reflects the full lifecycle of a SOC investigation:
-
-# 👉 Detection → Investigation → Response
-
-It demonstrates the ability to identify malicious activity, analyze attacker behavior, and execute appropriate remediation actions in a simulated enterprise environment.
-```
